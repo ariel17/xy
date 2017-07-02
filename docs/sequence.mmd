@@ -7,26 +7,26 @@ sequenceDiagram
     participant Usuario
 
     Usuario ->> Web: Registro de individuo a seguir.
-    Web ->> Web: Creacion de codigo de seguimiento.
-    Web ->> Almacenamiento: Registro de codigo de seguimiento pendiente.
-    Web -->> Usuario: Codigo de seguimiento.
+    Web ->> Web: Creación de código de seguimiento.
+    Web ->> Almacenamiento: Registro de código de seguimiento pendiente.
+    Web -->> Usuario: Código de seguimiento.
 
-    Individuo ->> Android: Ingreso de codigo de seguimiento.
-    Android ->> API: Solicitud de registro con codigo de seguimiento.
+    Individuo ->> Android: Ingreso de código de seguimiento.
+    Android ->> API: Solicitud de registro con código de seguimiento.
     API ->> API: Validacion de solicitud.
-    API ->> Almacenamiento: Remocion de codigo de seguimiento pendiente.
+    API ->> Almacenamiento: Remoción de código de seguimiento pendiente.
     API ->> Almacenamiento: Registro de usuario.
     API -->> Android: Resultado de registro.
     Android -->> Individuo: Resultado de registro.
 
     loop Cada 60 segundos
-        Android ->> API: Envio de coordenadas provistas por GPS.
+        Android ->> API: Envío de coordenadas provistas por GPS.
         API ->> Almacenamiento: Registro en historial.
     end
 
-    Usuario ->> Web: Consulta de posicion de los individuos.
-    Web -->> Usuario: Ultima posicion conocida en el mapa.
+    Usuario ->> Web: Consulta de posición de los individuos.
+    Web -->> Usuario: Última posición conocida en el mapa.
     loop Cada 60 segundos
-        Web ->> API: Consulta de ultima posicion registrada.
-        Web ->> Web: Actualizacion de la posicion en mapa.
+        Web ->> API: Consulta de última posición registrada.
+        Web ->> Web: Actualización de la posición en mapa.
     end
