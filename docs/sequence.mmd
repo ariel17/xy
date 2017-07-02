@@ -24,6 +24,8 @@ sequenceDiagram
         API ->> Almacenamiento: Registro en historial.
     end
 
+    Usuario ->> Web: Consulta de posicion de los individuos.
+    Web -->> Usuario: Ultima posicion conocida en el mapa.
     loop Cada 60 segundos
         Web ->> API: Consulta de ultima posicion registrada.
         Web ->> Web: Actualizacion de la posicion en mapa.
