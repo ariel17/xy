@@ -1,23 +1,41 @@
-package main
+package server
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
+const (
+	SUBJECTS_PATH string = "/subjects"
+)
+
+// Position Earth coordinates given by GPS device, asociated to a point i
+// time.
 type Position struct {
 	Latitude  float64
 	Longitude float64
 	CreatedAt time.Time
 }
 
+// Subject Represents a person or object to be tracked.
 type Subject struct {
 	Current Position
 	History []Position
+}
+
+// Configure Maps URL paths into handlers.
+func Configure() {
+	http.HandleFunc(SUBJECTS_PATH, subjects)
+}
+
+// Start Servers API endpoint in indicated address and port.
+func Start(address string, port int) {
+	address := fmt.Sprintf(":%v", address, port)
+	log.Infof("Starting server in %s", address)
+	http.ListenAndServe(address, nil)
 }
 
 func subjects(w http.ResponseWriter, r *http.Request) {
@@ -37,9 +55,4 @@ func subjects(w http.ResponseWriter, r *http.Request) {
 	default:
 		// Give an error message.
 	}
-}
-
-func main() {
-	http.HandleFunc("/subjects", subjects)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Args[1]), nil))
 }
