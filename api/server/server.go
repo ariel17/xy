@@ -31,11 +31,11 @@ func Configure() {
 	http.HandleFunc(SUBJECTS_PATH, subjects)
 }
 
-// Start Servers API endpoint in indicated address and port.
-func Start(address string, port int) {
-	address := fmt.Sprintf(":%v", address, port)
-	log.Infof("Starting server in %s", address)
-	http.ListenAndServe(address, nil)
+// Start Servers API endpoint in indicated ip and port.
+func Start(ip string, port string) error {
+	address := fmt.Sprintf("%s:%s", ip, port)
+	log.Println("Starting server in", address)
+	return http.ListenAndServe(address, nil)
 }
 
 func subjects(w http.ResponseWriter, r *http.Request) {
@@ -47,12 +47,13 @@ func subjects(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(subjects)
 	case "POST":
 		s := Subject{}
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(s)
 	case "PUT":
-		// Update an existing record.
+		// TODO Update an existing record.
 	case "DELETE":
-		// Remove the record.
+		// TODO Remove the record.
 	default:
-		// Give an error message.
+		// TODO Give an error message.
 	}
 }

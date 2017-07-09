@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ariel17/xy/api/server"
+	"./server"
 	"log"
 	"os"
 )
