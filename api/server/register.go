@@ -13,6 +13,7 @@ const (
 	PIN_NAME string = "pin"
 )
 
+// Result The operation result information and flags.
 type Result struct {
 	Success bool       `json:"success"`
 	Message string     `json:"message"`
@@ -36,7 +37,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		log.Println(fmt.Sprintf("Result: %v", result))
 		json.NewEncoder(w).Encode(result)
 
-	case "METHOD":
+	case "OPTIONS":
 		w.WriteHeader(http.StatusOK)
 		result := Result{true, "Allowed methods: POST", nil}
 		json.NewEncoder(w).Encode(result)
