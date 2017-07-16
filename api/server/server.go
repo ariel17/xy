@@ -7,14 +7,16 @@ import (
 )
 
 const (
-	SUBJECTS_PATH string = "/subjects"
-	REGISTER_PATH string = "/register"
+	// SubjectsPath TODO
+	SubjectsPath string = "/subjects"
+	// RegisterPath TODO
+	RegisterPath string = "/register"
 )
 
 // Configure Maps URL paths into handlers.
 func Configure() {
-	http.HandleFunc(SUBJECTS_PATH, subjects)
-	http.HandleFunc(REGISTER_PATH, register)
+	http.HandleFunc(SubjectsPath, Subjects)
+	http.HandleFunc(RegisterPath, Register)
 }
 
 // Start Servers API endpoint in indicated ip and port.

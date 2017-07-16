@@ -20,7 +20,8 @@ type Subject struct {
 	History []Position
 }
 
-func subjects(w http.ResponseWriter, r *http.Request) {
+// Subjects TODO
+func Subjects(w http.ResponseWriter, r *http.Request) {
 	subjects := make([]Subject, 0)
 	w.Header().Set("Content-Type", "application/json")
 

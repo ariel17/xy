@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	PIN_NAME string = "pin"
+	// PinName is the parameter name format where PIN value will be fetched
+	PinName string = "pin"
 )
 
 // Result The operation result information and flags.
@@ -20,14 +21,15 @@ type Result struct {
 	ID      *uuid.UUID `json:"id,omitempty"`
 }
 
-func register(w http.ResponseWriter, r *http.Request) {
+// Register TODO
+func Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.Method {
 
 	case "POST":
 		r.ParseForm()
-		pin := r.Form.Get(PIN_NAME)
+		pin := r.Form.Get(PinName)
 		// TODO save pin to storage
 		// TODO associate pin to some user
 		log.Println("Gained PIN code:", pin)
