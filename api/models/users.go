@@ -33,13 +33,15 @@ func createPINValue() string {
 
 // User TODO
 type User struct {
+	Nick       string
 	PendingPIN []PIN
 }
 
 // CreateUser TODO
-func CreateUser() User {
+func CreateUser(nick string) User {
 	// TODO save user into storage
 	return User{
+		Nick:       nick,
 		PendingPIN: make([]PIN, config.PINMaxAmount),
 	}
 }
