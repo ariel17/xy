@@ -14,7 +14,7 @@ const (
 	EnvDbPort string = "DB_PORT"
 
 	// EnvDbDatabase TODO
-	EnvDbDatabase string = "DB_DATABASE"
+	EnvDbName string = "DB_NAME"
 
 	// EnvDbUser TODO
 	EnvDbUser string = "DB_USER"
@@ -33,7 +33,7 @@ const (
 type Auth struct {
 	Host     string
 	Port     int
-	Database string
+	Name     string
 	User     string
 	Password string
 }
@@ -52,14 +52,14 @@ func init() {
 		os.Exit(ErrorInvalidParameters)
 	}
 
-	database := os.Getenv(EnvDbDatabase)
+	name := os.Getenv(EnvDbName)
 	user := os.Getenv(EnvDbUser)
 	password := os.Getenv(EnvDbPassword)
 
 	DatabaseAuth = Auth{
 		Host:     host,
 		Port:     port,
-		Database: database,
+		Name:     name,
 		User:     user,
 		Password: password,
 	}

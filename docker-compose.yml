@@ -1,0 +1,24 @@
+---
+version: '3'
+services:
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  api:
+    build:
+      context: ./api
+    environment:
+      - DB_HOST=mongo
+      - DB_PORT=27017
+      - DB_NAME=xy
+      - DB_USER=xy
+      - DB_PASSWORD=xy
+    ports:
+        - "8080:8080"
+    links:
+      - mongo
+    depends_on:
+      - mongo

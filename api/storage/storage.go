@@ -3,6 +3,8 @@ package storage
 import (
 	"fmt"
 
+	"log"
+
 	"github.com/ariel17/xy/api/config"
 	"gopkg.in/mgo.v2"
 )
@@ -18,12 +20,16 @@ type Storage struct {
 }
 
 func (s Storage) createURL() string {
-	auth := ""
+	auth, database := "", ""
 	if s.Auth.User != "" && s.Auth.Password != "" {
 		auth = fmt.Sprintf("%s:%s@", s.Auth.User, s.Auth.Password)
 	}
 
-	return fmt.Sprintf("%s%s:%d", auth, s.Auth.Host, s.Auth.Port)
+	if s.Auth.Name != "" {
+		database = fmt.Sprintf("/%s", s.Auth.Name)
+	}
+
+	return fmt.Sprintf("%s%s:%d%s", auth, s.Auth.Host, s.Auth.Port, database)
 }
 
 // Connect TODO
@@ -35,11 +41,13 @@ func (s *Storage) Connect() error {
 	}
 
 	s.session = session
+	log.Println("Successfully connected to MongoDB :)")
 	return nil
 }
 
 // Close TODO
 func (s *Storage) Close() {
+	log.Println("Closing MongoDB connections.")
 	s.session.Close()
 }
 
