@@ -13,7 +13,7 @@ const (
 	// EnvDbPort TODO
 	EnvDbPort string = "DB_PORT"
 
-	// EnvDbDatabase TODO
+	// EnvDbName TODO
 	EnvDbName string = "DB_NAME"
 
 	// EnvDbUser TODO
@@ -21,12 +21,6 @@ const (
 
 	// EnvDbPassword TODO
 	EnvDbPassword string = "DB_PASSWORD"
-
-	// ErrorInvalidParameters TODO
-	ErrorInvalidParameters int = 1
-
-	// ErrorInvalidConfiguration TODO
-	ErrorInvalidConfiguration int = 2
 )
 
 // Auth TODO
