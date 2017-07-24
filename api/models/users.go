@@ -6,6 +6,11 @@ import (
 	"github.com/ariel17/xy/api/config"
 )
 
+const (
+	// ModelName TODO
+	ModelName string = "users"
+)
+
 // PIN TODO
 type PIN struct {
 	Value     string
@@ -33,8 +38,8 @@ func createPINValue() string {
 
 // User TODO
 type User struct {
-	Nick       string
-	PendingPIN []PIN
+	Nick       string `json:"nick"`
+	PendingPIN []PIN  `json:"pendingPin"`
 }
 
 // CreateUser TODO
@@ -44,4 +49,16 @@ func CreateUser(nick string) User {
 		Nick:       nick,
 		PendingPIN: make([]PIN, config.PINMaxAmount),
 	}
+}
+
+func (u *User) Save() error {
+	return nil
+}
+
+func (u *User) Delete() error {
+	return nil
+}
+
+func (u *User) GetModelName() string {
+	return ModelName
 }
