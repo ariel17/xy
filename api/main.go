@@ -12,12 +12,10 @@ import (
 func main() {
 	port := os.Args[1]
 
-	err := storage.CreateStorage()
-	if err != nil {
-		log.Fatal("There was an error connecting to database:", err)
+	if err := storage.CreateStorage(); err != nil {
+		log.Fatal("error connecting to database", err)
 		os.Exit(config.ErrorInvalidConfiguration)
 	}
-
 	defer storage.Instance.Close()
 
 	server.Configure()
