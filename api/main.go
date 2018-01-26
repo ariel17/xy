@@ -10,9 +10,8 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/subjects", controllers.Subjects)
-	http.HandleFunc("/register", controllers.Register)
 	http.HandleFunc("/users", controllers.Users)
+	http.HandleFunc("/register", controllers.Register)
 
 	address := fmt.Sprintf("0.0.0.0:%s", os.Args[1])
 	log.Println("Starting server in", address)

@@ -1,23 +1,5 @@
 package config
 
-import (
-	"time"
-)
-
-const (
-	// ErrorInvalidParameters TODO
-	ErrorInvalidParameters = iota
-
-	// ErrorInvalidConfiguration TODO
-	ErrorInvalidConfiguration
-
-	// PINDuration TODO
-	PINDuration = 3 * time.Hour
-
-	// PINMaxAmount TODO
-	PINMaxAmount = 10
-)
-
 var (
 	// DbHost TODO
 	DbHost string
