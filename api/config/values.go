@@ -1,9 +1,6 @@
 package config
 
 import (
-	"log"
-	"os"
-	"strconv"
 	"time"
 )
 
@@ -22,23 +19,22 @@ const (
 )
 
 var (
-	DbHost     string
-	DbPort     int
-	DbName     string
-	DbUser     string
+	// DbHost TODO
+	DbHost string
+	// DbPort TODO
+	DbPort int
+	// DbName TODO
+	DbName string
+	// DbUser TODO
+	DbUser string
+	// DbPassword TODO
 	DbPassword string
 )
 
 func init() {
-	DbHost := os.Getenv("DB_HOST")
-
-	DbPort, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		log.Fatal("invalid port value for MongoDB", err)
-		os.Exit(ErrorInvalidParameters)
-	}
-
-	DbName := os.Getenv("DB_NAME")
-	DbUser := os.Getenv("DB_USER")
-	DbPassword := os.Getenv("DB_PASSWORD")
+	DbHost = "localhost"
+	DbPort = 9090
+	DbName = "db"
+	DbUser = "username"
+	DbPassword = "password"
 }

@@ -6,17 +6,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ariel17/xy/api/server"
+	"github.com/ariel17/xy/api/controllers"
 )
 
 func TestGETSubjectsOk(t *testing.T) {
-	req, err := http.NewRequest("GET", server.SubjectsPath, nil)
+	req, err := http.NewRequest("GET", controllers.SubjectsPath, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(server.Subjects)
+	handler := http.HandlerFunc(controllers.Subjects)
 
 	handler.ServeHTTP(rr, req)
 
@@ -35,13 +35,13 @@ func TestGETSubjectsOk(t *testing.T) {
 }
 
 func TestPOSTSubjectsOk(t *testing.T) {
-	req, err := http.NewRequest("POST", server.SubjectsPath, nil)
+	req, err := http.NewRequest("POST", controllers.SubjectsPath, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(server.Subjects)
+	handler := http.HandlerFunc(controllers.Subjects)
 
 	handler.ServeHTTP(rr, req)
 

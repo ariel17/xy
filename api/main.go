@@ -1,23 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 
-	"github.com/ariel17/xy/api/config"
-	"github.com/ariel17/xy/api/server"
-	"github.com/ariel17/xy/api/storage"
+	"github.com/ariel17/xy/api/controllers"
 )
 
 func main() {
-	port := os.Args[1]
+	http.HandleFunc("/subjects", controllers.Subjects)
+	http.HandleFunc("/register", controllers.Register)
+	http.HandleFunc("/users", controllers.Users)
 
-	if err := storage.CreateStorage(); err != nil {
-		log.Fatal("error connecting to database", err)
-		os.Exit(config.ErrorInvalidConfiguration)
-	}
-	defer storage.Instance.Close()
+	address := fmt.Sprintf("0.0.0.0:%s", os.Args[1])
+	log.Println("Starting server in", address)
 
-	server.Configure()
-	log.Fatal(server.Start("0.0.0.0", port))
+	log.Fatal(http.ListenAndServe(address, nil))
 }

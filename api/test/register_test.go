@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ariel17/xy/api/server"
+	"github.com/ariel17/xy/api/controllers"
 )
 
 func TestRegisterOk(t *testing.T) {
 	pin := "abcd1234"
-	reader := strings.NewReader(fmt.Sprintf("%s=%s", server.PinName, pin))
-	req, err := http.NewRequest("POST", server.RegisterPath, reader)
+	reader := strings.NewReader(fmt.Sprintf("%s=%s", controllers.PinName, pin))
+	req, err := http.NewRequest("POST", controller.RegisterPath, reader)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	if err != nil {
@@ -22,7 +22,7 @@ func TestRegisterOk(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 
-	handler := http.HandlerFunc(server.Register)
+	handler := http.HandlerFunc(controller.Register)
 	handler.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusCreated {

@@ -1,29 +1,19 @@
-package storage
+package dao
 
 import (
-	"github.com/ariel17/xy/api/config"
-)
-
-var (
-	Instance Storage
+	"github.com/ariel17/xy/api/domain"
 )
 
 // Storage TODO
 type Storage interface {
 	Connect() error
 	Close() error
-	Insert(m *domain.Model) error
-	Delete(m *domain.Model) error
+	InsertUser(u *domain.User) error
+	DeleteUser(u *domain.User) error
+	// TODO GetUser
 }
 
-// CreateStorage TODO
-func New() error {
-	if Instance == nil {
-		Instance = &MongoDB{
-			Auth: config.DatabaseAuth,
-		}
-		return Instance.Connect()
-	}
-
-	return nil
+// New TODO
+func New() Storage {
+	return &MongoDB{}
 }

@@ -1,18 +1,11 @@
-package server
+package controllers
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
-	"github.com/ariel17/xy/api/config"
-	"github.com/ariel17/xy/api/models"
-	"github.com/ariel17/xy/api/storage"
-)
-
-const (
-	// ParamNick TODO
-	ParamNick string = "nick"
+	"github.com/ariel17/xy/api/domain"
 )
 
 // Users TODO
@@ -21,23 +14,20 @@ func Users(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		db := storage.MongoDB{
-			Auth: config.DatabaseAuth,
-		}
-		u := db.Get()
+		u := domain.NewUser("ariel")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(u)
 
 	case "POST":
 		r.ParseForm()
-		nick := r.Form.Get(ParamNick)
+		nick := r.Form.Get("nick")
 		log.Println("POST fields:", nick)
 
-		u := models.CreateUser(nick)
-		u.Save()
+		u := domain.NewUser(nick)
 
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(u)
+
 	default:
 		w.WriteHeader(http.StatusForbidden)
 	}

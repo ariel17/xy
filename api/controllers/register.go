@@ -1,4 +1,4 @@
-package server
+package controllers
 
 import (
 	"encoding/json"
@@ -7,11 +7,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-)
-
-const (
-	// PinName is the parameter name format where PIN value will be fetched
-	PinName string = "pin"
 )
 
 // Result The operation result information and flags.
@@ -29,7 +24,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		r.ParseForm()
-		pin := r.Form.Get(PinName)
+		pin := r.Form.Get("pin")
 		// TODO save pin to storage
 		// TODO associate pin to some user
 		log.Println("Gained PIN code:", pin)

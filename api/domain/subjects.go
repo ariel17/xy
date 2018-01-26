@@ -1,4 +1,4 @@
-package models
+package domain
 
 import "time"
 
@@ -12,6 +12,6 @@ type Position struct {
 
 // Subject Represents a person or object to be tracked.
 type Subject struct {
-	Current Position
-	History []Position
+	CurrentPosition Position
+	History         []Position
 }
