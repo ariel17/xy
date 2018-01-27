@@ -7,43 +7,53 @@ import (
 
 	"github.com/ariel17/xy/api/dao"
 	"github.com/ariel17/xy/api/domain"
+	"github.com/julienschmidt/httprouter"
 )
 
-// Users TODO
-func Users(w http.ResponseWriter, r *http.Request) {
+// GetUsers TODO
+func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if user, err := dao.GetUser(ps.ByName("id")); err != nil {
+		log.Printf("failed to get user: %v", err)
+		w.WriteHeader(http.StatusNotFound)
+		result := domain.APIResponse{
+			Message: err.Error(),
+		}
+		json.NewEncoder(w).Encode(result)
+
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(user)
+	}
+}
+
+// PostUsers TODO
+func PostUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	result := domain.APIResponse{}
 	var status int
 
-	switch r.Method {
-	case "GET":
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 
-	case "POST":
-		decoder := json.NewDecoder(r.Body)
-		defer r.Body.Close()
-
-		var u domain.User
-		if err := decoder.Decode(&u); err != nil {
-			log.Printf("failed to parse user data: %v", err)
-			status = http.StatusForbidden
-			result.Message = err.Error()
-
-		} else if err := dao.InsertUser(&u); err != nil {
-			log.Printf("failed to save new user: %v", err)
-			status = http.StatusInternalServerError
-			result.Message = err.Error()
-
-		} else {
-			m := "successfully created user"
-			log.Printf("%s %v", m, u)
-			status = http.StatusCreated
-			result.Success = true
-			result.Message = m
-		}
-
-	default:
+	var u domain.User
+	if err := decoder.Decode(&u); err != nil {
+		log.Printf("failed to parse user data: %v", err)
 		status = http.StatusForbidden
-		result.Message = "Not allowed"
+		result.Message = err.Error()
+
+	} else if err := dao.InsertUser(&u); err != nil {
+		log.Printf("failed to save new user: %v", err)
+		status = http.StatusInternalServerError
+		result.Message = err.Error()
+
+	} else {
+		m := "successfully created user"
+		status = http.StatusCreated
+		result.Success = true
+		result.Message = m
+		result.Data = u
 	}
 
 	w.WriteHeader(status)

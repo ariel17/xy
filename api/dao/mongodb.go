@@ -31,6 +31,13 @@ func DeleteUser(u *domain.User) error {
 	return getCollection("users").Remove(u)
 }
 
+// GetUser TODO
+func GetUser(id string) (*domain.User, error) {
+	var u domain.User
+	err := getCollection("users").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&u)
+	return &u, err
+}
+
 func getCollection(collection string) *mgo.Collection {
 	return session.DB(config.DbName).C(collection)
 }
