@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/google/uuid"
-  packages = ["."]
-  revision = "064e2069ce9c359c118179501254f67d7d37ba24"
-  version = "0.2"
-
-[[projects]]
   branch = "v2"
   name = "gopkg.in/mgo.v2"
   packages = [".","bson","internal/json","internal/sasl","internal/scram"]
@@ -16,6 +10,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a54d3a14aa3856bf6c477d90c694cdcc1514d618ac2d0a34b24e878cce3fb664"
+  inputs-digest = "f6e466625d21d47bfbaf0ac269619cea8e2f0342460342ef2f67118f40d0e294"
   solver-name = "gps-cdcl"
   solver-version = 1

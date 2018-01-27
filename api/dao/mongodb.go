@@ -7,12 +7,13 @@ import (
 	"github.com/ariel17/xy/api/config"
 	"github.com/ariel17/xy/api/domain"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var session *mgo.Session
 
 func init() {
-	url := fmt.Sprintf("%s:%s@%s:%d/%s", config.DbUser, config.DbPassword, config.DbHost, config.DbPort, config.DbName)
+	url := fmt.Sprintf("%s:%d", config.DbHost, config.DbPort)
 	var err error
 	if session, err = mgo.Dial(url); err != nil {
 		log.Fatal(err)
@@ -21,6 +22,7 @@ func init() {
 
 // InsertUser TODO
 func InsertUser(u *domain.User) error {
+	u.ID = bson.NewObjectId()
 	return getCollection("users").Insert(u)
 }
 

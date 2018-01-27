@@ -1,0 +1,15 @@
+---
+version: '3'
+services:
+
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo

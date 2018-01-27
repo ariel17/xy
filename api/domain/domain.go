@@ -3,19 +3,19 @@ package domain
 import (
 	"time"
 
-	"github.com/google/uuid"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // User TODO
 type User struct {
-	ID   int64  `json:"id"`
-	Nick string `json:"nick"`
+	ID   bson.ObjectId `json:"_id" bson:"_id"`
+	Nick string        `json:"nick" bson:"name"`
 }
 
 // Observable represents a person or object to be tracked.
 type Observable struct {
-	ID     int64 `json:"id"`
-	UserID int64 `json:"user_id"`
+	ID     bson.ObjectId `json:"_id" bson:"_id"`
+	UserID int64         `json:"user_id" bson:"user_id"`
 }
 
 // Position represents a point on the Earth surface.
@@ -40,7 +40,6 @@ type Pin struct {
 
 // APIResponse TODO
 type APIResponse struct {
-	Success bool      `json:"success"`
-	Message string    `json:"message"`
-	ID      uuid.UUID `json:"id"`
+	Success bool   `json:"success"`
+	Message string `json:"message"`
 }
