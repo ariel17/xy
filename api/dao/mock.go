@@ -1,0 +1,4 @@
+package dao
+
+func newMockMongoDB() {
+}

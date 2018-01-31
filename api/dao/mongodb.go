@@ -10,16 +10,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var session *mgo.Session
-
-func init() {
-	url := fmt.Sprintf("%s:%d", config.DbHost, config.DbPort)
-	var err error
-	if session, err = mgo.Dial(url); err != nil {
-		log.Fatal(err)
-	}
-}
-
 // InsertUser TODO
 func InsertUser(u *domain.User) error {
 	u.ID = bson.NewObjectId()
@@ -40,4 +30,12 @@ func GetUser(id string) (*domain.User, error) {
 
 func getCollection(collection string) *mgo.Collection {
 	return session.DB(config.DbName).C(collection)
+}
+
+func newRealMongoDB() {
+	url := fmt.Sprintf("%s:%d", config.DbHost, config.DbPort)
+	var err error
+	if session, err = mgo.Dial(url); err != nil {
+		log.Fatal(err)
+	}
 }
