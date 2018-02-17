@@ -2,7 +2,6 @@ package dao
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/ariel17/xy/api/config"
 	"github.com/ariel17/xy/api/domain"
@@ -10,32 +9,37 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// MongoDB is the implementation for the DB abstraction.
+type MongoDB struct {
+	session *mgo.Session
+}
+
+// Connect opens the connection to database.
+func (m *MongoDB) Connect() error {
+	url := fmt.Sprintf("%s:%d", config.DbHost, config.DbPort)
+	var err error
+	m.session, err = mgo.Dial(url)
+	return err
+}
+
 // InsertUser TODO
-func InsertUser(u *domain.User) error {
+func (m *MongoDB) InsertUser(u *domain.User) error {
 	u.ID = bson.NewObjectId()
-	return getCollection("users").Insert(u)
+	return m.getCollection("users").Insert(u)
 }
 
 // DeleteUser TODO
-func DeleteUser(u *domain.User) error {
-	return getCollection("users").Remove(u)
+func (m *MongoDB) DeleteUser(u *domain.User) error {
+	return m.getCollection("users").Remove(u)
 }
 
 // GetUser TODO
-func GetUser(id string) (*domain.User, error) {
+func (m *MongoDB) GetUser(id string) (*domain.User, error) {
 	var u domain.User
-	err := getCollection("users").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&u)
+	err := m.getCollection("users").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&u)
 	return &u, err
 }
 
-func getCollection(collection string) *mgo.Collection {
-	return session.DB(config.DbName).C(collection)
-}
-
-func newRealMongoDB() {
-	url := fmt.Sprintf("%s:%d", config.DbHost, config.DbPort)
-	var err error
-	if session, err = mgo.Dial(url); err != nil {
-		log.Fatal(err)
-	}
+func (m *MongoDB) getCollection(collection string) *mgo.Collection {
+	return m.session.DB(config.DbName).C(collection)
 }
