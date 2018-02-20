@@ -15,16 +15,17 @@ type DB interface {
 	GetUser(id string) (*domain.User, error)
 }
 
-var db DB
+// Client holds the implementation instance, based on the environment.
+var Client DB
 
 func init() {
 	if config.IsTest() {
-		db = &MockDB{}
+		Client = &MockDB{}
 	} else {
-		db = &MongoDB{}
+		Client = &MongoDB{}
 	}
 
-	if err := db.Connect(); err != nil {
+	if err := Client.Connect(); err != nil {
 		log.Fatal(err)
 	}
 }

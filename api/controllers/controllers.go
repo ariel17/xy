@@ -14,7 +14,7 @@ import (
 func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	if user, err := dao.GetUser(ps.ByName("id")); err != nil {
+	if user, err := dao.Client.GetUser(ps.ByName("id")); err != nil {
 		log.Printf("failed to get user: %v", err)
 		w.WriteHeader(http.StatusNotFound)
 		result := domain.APIResponse{
@@ -43,7 +43,7 @@ func PostUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		status = http.StatusForbidden
 		result.Message = err.Error()
 
-	} else if err := dao.InsertUser(&u); err != nil {
+	} else if err := dao.Client.InsertUser(&u); err != nil {
 		log.Printf("failed to save new user: %v", err)
 		status = http.StatusInternalServerError
 		result.Message = err.Error()
