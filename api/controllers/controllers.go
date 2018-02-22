@@ -14,38 +14,37 @@ import (
 // GetUsers TODO
 func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	var (
+		status int
+		result domain.APIResponse
+	)
 
 	if id := ps.ByName("id"); id == "" {
 		message := "empty id"
 		log.Print(message)
-		w.WriteHeader(http.StatusBadRequest)
-		result := domain.APIResponse{
-			Message: message,
-		}
-		json.NewEncoder(w).Encode(result)
+		status = http.StatusBadRequest
+		result.Message = message
 
 	} else if user, err := dao.Client.GetUser(id); err != nil {
 		log.Printf("failed to get user: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		result := domain.APIResponse{
-			Message: err.Error(),
-		}
-		json.NewEncoder(w).Encode(result)
+		status = http.StatusInternalServerError
+		result.Message = err.Error()
 
 	} else if user == nil {
 		message := fmt.Sprintf("user %s not found", id)
 		log.Print(message)
-		w.WriteHeader(http.StatusNotFound)
-		result := domain.APIResponse{
-			Message: message,
-		}
-		json.NewEncoder(w).Encode(result)
+		status = http.StatusNotFound
+		result.Message = message
 
 	} else {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(user)
-		log.Print(user)
+		status = http.StatusOK
+		result.Success = true
+		result.Message = "user found"
+		result.Data = user
 	}
+
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(result)
 }
 
 // PostUsers TODO
@@ -69,11 +68,52 @@ func PostUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		result.Message = err.Error()
 
 	} else {
-		m := "successfully created user"
 		status = http.StatusCreated
 		result.Success = true
-		result.Message = m
+		result.Message = "user created"
 		result.Data = u
+	}
+
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(result)
+}
+
+// DeleteUsers TODO
+func DeleteUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	var (
+		status int
+		result domain.APIResponse
+	)
+
+	if id := ps.ByName("id"); id == "" {
+		message := "empty id"
+		log.Print(message)
+		status = http.StatusBadRequest
+		result.Message = message
+
+	} else if user, err := dao.Client.GetUser(id); err != nil {
+		log.Printf("failed to get user: %v", err)
+		status = http.StatusInternalServerError
+		result.Message = err.Error()
+
+	} else if user == nil {
+		message := fmt.Sprintf("user %s not found", id)
+		log.Print(message)
+		status = http.StatusNotFound
+		result.Message = message
+
+	} else if err := dao.Client.DeleteUser(user); err != nil {
+		log.Printf("error deleting user %v: %v", user, err)
+		status = http.StatusInternalServerError
+		result.Message = err.Error()
+
+	} else {
+		status = http.StatusOK
+		result.Success = true
+		result.Message = fmt.Sprintf("user %s deleted", id)
+		result.Data = user
+		log.Print(user)
 	}
 
 	w.WriteHeader(status)

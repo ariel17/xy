@@ -1,6 +1,7 @@
 package test
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -42,7 +43,7 @@ func TestControllers(t *testing.T) {
 				t.FailNow()
 			}
 
-			expectedBody := `{"_id":"616263313233","nick":"ariel17"}`
+			expectedBody := `{"success":true,"message":"user found","data":{"_id":"616263313233","nick":"ariel17"}}`
 			if body := strings.TrimSpace(resp.Body.String()); body != expectedBody {
 				t.Errorf("body mismatch! expected %s, got %s", expectedBody, body)
 				t.FailNow()
@@ -50,8 +51,6 @@ func TestControllers(t *testing.T) {
 		})
 
 		t.Run("NotFound", func(t *testing.T) {
-			defer dao.CleanMocks()
-
 			router := api.ConfigureRouter()
 			req, _ := http.NewRequest("GET", "/users/9999", nil)
 			resp := httptest.NewRecorder()
@@ -76,44 +75,92 @@ func TestControllers(t *testing.T) {
 		})
 	})
 
-	// testCases := []struct {
-	// 	name           string
-	// 	handle         httprouter.Handle
-	// 	path           string
-	// 	userID         string
-	// 	method         string
-	// 	body           string
-	// 	expectedStatus int
-	// 	expectedBody   string
-	// }{
-	// 	{"GetUsersOK", controllers.GetUsers, "/users/abc123", "abc123", "GET", "", http.StatusOK, "{}"},
-	// 	{"GetUsersNotFound", controllers.GetUsers, "/users/abc123", "abc123", "GET", "", http.StatusNotFound, "{}"},
-	// }
+	t.Run("PostUser", func(t *testing.T) {
 
-	// for _, tc := range testCases {
-	// 	t.Run(tc.name, func(t *testing.T) {
+		t.Run("OK", func(t *testing.T) {
+			defer dao.CleanMocks()
+			u := domain.User{
+				Nick: "ariel17",
+			}
 
-	// 		body := bytes.NewBufferString(tc.body)
-	// 		resp, err := doRequest(tc.method, tc.path, body, tc.handle)
-	// 		if err != nil {
-	// 			t.Error(err)
-	// 			t.FailNow()
-	// 		}
+			router := api.ConfigureRouter()
+			req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer([]byte(`{"nick":"ariel17"}`)))
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
 
-	// 		if resp.Code != tc.expectedStatus {
-	// 			t.Errorf("status missmatch! expected %d, got %d: %v", tc.expectedStatus, resp.Code, err)
-	// 			t.FailNow()
-	// 		}
+			expectedStatus := http.StatusCreated
+			if resp.Code != expectedStatus {
+				t.Errorf("status mismatch! expected %d, got %d: %v", expectedStatus, resp.Code, resp.Body)
+				t.FailNow()
+			}
 
-	// 		if resp.Body == nil {
-	// 			t.Error("body is nil")
-	// 			t.FailNow()
-	// 		}
+			if resp.Body == nil {
+				t.Error("body is nil")
+				t.FailNow()
+			}
 
-	// 		if body := resp.Body.String(); body != tc.expectedBody {
-	// 			t.Errorf("body missmatch! expected %s, got %s", tc.expectedBody, body)
-	// 			t.FailNow()
-	// 		}
-	// 	})
-	// }
+			expectedBody := `{"success":true,"message":"user created","data":{"_id":"","nick":"ariel17"}}`
+			if body := strings.TrimSpace(resp.Body.String()); body != expectedBody {
+				t.Errorf("body mismatch! expected %s, got %s", expectedBody, body)
+				t.FailNow()
+			}
+
+			if uu, err := dao.Client.GetUser(""); err != nil {
+				t.Error(err)
+				t.FailNow()
+			} else if uu == nil {
+				t.Errorf("created user not found: expected: %v", u)
+				t.FailNow()
+			} else if *uu != u {
+				t.Errorf("created user mismatch: expected %v, got %v", u, uu)
+				t.FailNow()
+			}
+		})
+	})
+
+	t.Run("DeleteUser", func(t *testing.T) {
+
+		t.Run("OK", func(t *testing.T) {
+			defer dao.CleanMocks()
+			u := domain.User{
+				ID:   "abc123",
+				Nick: "ariel17",
+			}
+			if err := dao.Client.InsertUser(&u); err != nil {
+				t.Error(err)
+				t.FailNow()
+			}
+
+			router := api.ConfigureRouter()
+			req, _ := http.NewRequest("DELETE", "/users/abc123", nil)
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
+
+			expectedStatus := http.StatusOK
+			if resp.Code != expectedStatus {
+				t.Errorf("status mismatch! expected %d, got %d: %v", expectedStatus, resp.Code, resp.Body)
+				t.FailNow()
+			}
+
+			if resp.Body == nil {
+				t.Error("body is nil")
+				t.FailNow()
+			}
+
+			expectedBody := `{"success":true,"message":"user abc123 deleted","data":{"_id":"616263313233","nick":"ariel17"}}`
+			if body := strings.TrimSpace(resp.Body.String()); body != expectedBody {
+				t.Errorf("body mismatch! expected %s, got %s", expectedBody, body)
+				t.FailNow()
+			}
+
+			if uu, err := dao.Client.GetUser("abc123"); err != nil {
+				t.Error(err)
+				t.FailNow()
+			} else if uu != nil {
+				t.Errorf("deleted user found! %v", uu)
+				t.FailNow()
+			}
+		})
+	})
+
 }
