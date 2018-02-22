@@ -19,10 +19,10 @@ type DB interface {
 var Client DB
 
 func init() {
-	if config.IsTest() {
-		Client = &MockDB{}
-	} else {
+	if config.Environment == config.ProductionEnv {
 		Client = &MongoDB{}
+	} else {
+		Client = &MockDB{}
 	}
 
 	if err := Client.Connect(); err != nil {

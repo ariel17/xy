@@ -1,15 +1,14 @@
 package test
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
-	"github.com/ariel17/xy/api/controllers"
+	"github.com/ariel17/xy/api/api"
 	"github.com/ariel17/xy/api/dao"
 	"github.com/ariel17/xy/api/domain"
-	"github.com/julienschmidt/httprouter"
 )
 
 func TestControllers(t *testing.T) {
@@ -27,14 +26,14 @@ func TestControllers(t *testing.T) {
 				t.FailNow()
 			}
 
-			resp, err := doRequest("GET", "/users/abc123", nil, controllers.GetUsers)
-			if err != nil {
-				t.Error(err)
-				t.FailNow()
-			}
+			router := api.ConfigureRouter()
+			req, _ := http.NewRequest("GET", "/users/abc123", nil)
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
 
-			if resp.Code != http.StatusOK {
-				t.Errorf("status missmatch! expected %d, got %d: %v", http.StatusOK, resp.Code, err)
+			expectedStatus := http.StatusOK
+			if resp.Code != expectedStatus {
+				t.Errorf("status mismatch! expected %d, got %d: %v", expectedStatus, resp.Code, resp.Body)
 				t.FailNow()
 			}
 
@@ -43,22 +42,24 @@ func TestControllers(t *testing.T) {
 				t.FailNow()
 			}
 
-			// if body := resp.Body.String(); body != tc.expectedBody {
-			// 	t.Errorf("body missmatch! expected %s, got %s", tc.expectedBody, body)
-			// 	t.FailNow()
-			// }
+			expectedBody := `{"_id":"616263313233","nick":"ariel17"}`
+			if body := strings.TrimSpace(resp.Body.String()); body != expectedBody {
+				t.Errorf("body mismatch! expected %s, got %s", expectedBody, body)
+				t.FailNow()
+			}
 		})
 
 		t.Run("NotFound", func(t *testing.T) {
 			defer dao.CleanMocks()
-			resp, err := doRequest("GET", "/users/9999", nil, controllers.GetUsers)
-			if err != nil {
-				t.Error(err)
-				t.FailNow()
-			}
 
-			if resp.Code != http.StatusNotFound {
-				t.Errorf("status missmatch! expected %d, got %d: %v", http.StatusOK, resp.Code, err)
+			router := api.ConfigureRouter()
+			req, _ := http.NewRequest("GET", "/users/9999", nil)
+			resp := httptest.NewRecorder()
+			router.ServeHTTP(resp, req)
+
+			expectedStatus := http.StatusNotFound
+			if resp.Code != expectedStatus {
+				t.Errorf("status mismatch! expected %d, got %d: %v", expectedStatus, resp.Code, resp.Body)
 				t.FailNow()
 			}
 
@@ -67,10 +68,11 @@ func TestControllers(t *testing.T) {
 				t.FailNow()
 			}
 
-			// if body := resp.Body.String(); body != tc.expectedBody {
-			// 	t.Errorf("body missmatch! expected %s, got %s", tc.expectedBody, body)
-			// 	t.FailNow()
-			// }
+			expectedBody := `{"success":false,"message":"user 9999 not found"}`
+			if body := strings.TrimSpace(resp.Body.String()); body != expectedBody {
+				t.Errorf("body mismatch! expected %s, got %s", expectedBody, body)
+				t.FailNow()
+			}
 		})
 	})
 
@@ -114,17 +116,4 @@ func TestControllers(t *testing.T) {
 	// 		}
 	// 	})
 	// }
-}
-
-func doRequest(method, uri string, body *bytes.Buffer, handle httprouter.Handle) (*httptest.ResponseRecorder, error) {
-	resp := httptest.NewRecorder()
-	req, err := http.NewRequest(method, uri, body)
-	if err != nil {
-		return nil, err
-	}
-
-	router := httprouter.New()
-	router.Handle(method, uri, handle)
-	router.ServeHTTP(resp, req)
-	return resp, nil
 }

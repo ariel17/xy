@@ -3,7 +3,7 @@
 ## Test it
 
 ```bash
-~/xy/api$ go test ./...
+~/xy/api$ go test ./test/... -test.v
 ```
 
 ## Run it

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -14,17 +15,36 @@ import (
 func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	if user, err := dao.Client.GetUser(ps.ByName("id")); err != nil {
+	if id := ps.ByName("id"); id == "" {
+		message := "empty id"
+		log.Print(message)
+		w.WriteHeader(http.StatusBadRequest)
+		result := domain.APIResponse{
+			Message: message,
+		}
+		json.NewEncoder(w).Encode(result)
+
+	} else if user, err := dao.Client.GetUser(id); err != nil {
 		log.Printf("failed to get user: %v", err)
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusInternalServerError)
 		result := domain.APIResponse{
 			Message: err.Error(),
+		}
+		json.NewEncoder(w).Encode(result)
+
+	} else if user == nil {
+		message := fmt.Sprintf("user %s not found", id)
+		log.Print(message)
+		w.WriteHeader(http.StatusNotFound)
+		result := domain.APIResponse{
+			Message: message,
 		}
 		json.NewEncoder(w).Encode(result)
 
 	} else {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(user)
+		log.Print(user)
 	}
 }
 
