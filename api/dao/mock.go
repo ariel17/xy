@@ -29,12 +29,11 @@ func (m *MockDB) InsertUser(u *domain.User) error {
 }
 
 // DeleteUser TODO
-func (m *MockDB) DeleteUser(u *domain.User) error {
-	k := string(u.ID)
-	if err := errors[k]; err != nil {
+func (m *MockDB) DeleteUser(id string) error {
+	if err := errors[id]; err != nil {
 		return err
 	}
-	delete(inserted, k)
+	delete(inserted, id)
 	return nil
 }
 

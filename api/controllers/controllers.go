@@ -11,7 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// GetUsers TODO
+// GetUsers fetchs an user by indicated ID, if exists.
 func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	var (
@@ -47,7 +47,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	json.NewEncoder(w).Encode(result)
 }
 
-// PostUsers TODO
+// PostUsers creates a new user with given data.
 func PostUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	result := domain.APIResponse{}
@@ -78,7 +78,7 @@ func PostUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	json.NewEncoder(w).Encode(result)
 }
 
-// DeleteUsers TODO
+// DeleteUsers removes an existing user from storage, if exists.
 func DeleteUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	var (
@@ -103,7 +103,7 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		status = http.StatusNotFound
 		result.Message = message
 
-	} else if err := dao.Client.DeleteUser(user); err != nil {
+	} else if err := dao.Client.DeleteUser(id); err != nil {
 		log.Printf("error deleting user %v: %v", user, err)
 		status = http.StatusInternalServerError
 		result.Message = err.Error()
@@ -120,23 +120,18 @@ func DeleteUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	json.NewEncoder(w).Encode(result)
 }
 
-// Register TODO
-func Register(w http.ResponseWriter, r *http.Request) {
+// PostRegister registers a device into a user's fleet.
+func PostRegister(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	var (
+		status int
+		result domain.APIResponse
+	)
 
-	switch r.Method {
+	// TODO create new pin
+	// TODO save new pin
+	// TODO include pin value in response
 
-	case "POST":
-		// TODO
-
-	case "OPTIONS":
-		// TODO
-
-	default:
-		w.WriteHeader(http.StatusBadRequest)
-		result := domain.APIResponse{
-			Message: "Not allowed.",
-		}
-		json.NewEncoder(w).Encode(result)
-	}
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(result)
 }

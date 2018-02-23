@@ -12,7 +12,7 @@ type User struct {
 	Nick string        `json:"nick" bson:"name"`
 }
 
-// Observable represents a person or object to be tracked.
+// Observable represents a thing (person or object) to be tracked.
 type Observable struct {
 	ID     bson.ObjectId `json:"_id" bson:"_id"`
 	UserID int64         `json:"user_id" bson:"user_id"`
@@ -34,8 +34,10 @@ type ObservablePosition struct {
 
 // Pin TODO
 type Pin struct {
-	Value     string    `json:"value"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        bson.ObjectId `json:"_id" bson:"_id"`
+	UserID    string        `json:"user_id"`
+	Value     string        `json:"value"`
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 // APIResponse TODO

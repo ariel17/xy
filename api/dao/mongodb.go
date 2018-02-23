@@ -29,8 +29,8 @@ func (m *MongoDB) InsertUser(u *domain.User) error {
 }
 
 // DeleteUser TODO
-func (m *MongoDB) DeleteUser(u *domain.User) error {
-	return m.getCollection("users").Remove(u)
+func (m *MongoDB) DeleteUser(id string) error {
+	return m.getCollection("users").RemoveId(id)
 }
 
 // GetUser TODO
@@ -38,6 +38,24 @@ func (m *MongoDB) GetUser(id string) (*domain.User, error) {
 	var u domain.User
 	err := m.getCollection("users").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&u)
 	return &u, err
+}
+
+// GetPendingPin returns a registered pin for indicated ID, or error.
+func (m *MongoDB) GetPendingPin(id string) (*domain.Pin, error) {
+	var pin domain.Pin
+	err := m.getCollection("pending_pins").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&pin)
+	return &pin, err
+}
+
+// InsertPendingPin saves a new pin for an indicated user.
+func (m *MongoDB) InsertPendingPin(p *domain.Pin) error {
+	p.ID = bson.NewObjectId()
+	return m.getCollection("pending_pins").Insert(p)
+}
+
+// DeletePendingPin removes a pending pin by its ID.
+func (m *MongoDB) DeletePendingPin(id string) error {
+	return m.getCollection("pending_pins").RemoveId(id)
 }
 
 func (m *MongoDB) getCollection(collection string) *mgo.Collection {

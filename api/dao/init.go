@@ -11,7 +11,7 @@ import (
 type DB interface {
 	Connect() error
 	InsertUser(u *domain.User) error
-	DeleteUser(u *domain.User) error
+	DeleteUser(id string) error
 	GetUser(id string) (*domain.User, error)
 }
 
