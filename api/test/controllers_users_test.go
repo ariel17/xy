@@ -12,10 +12,9 @@ import (
 	"github.com/ariel17/xy/api/domain"
 )
 
-func TestControllers(t *testing.T) {
+func TestUserController(t *testing.T) {
 
-	t.Run("GetUser", func(t *testing.T) {
-
+	t.Run("GET", func(t *testing.T) {
 		t.Run("OK", func(t *testing.T) {
 			defer dao.CleanMocks()
 			u := domain.User{
@@ -75,7 +74,7 @@ func TestControllers(t *testing.T) {
 		})
 	})
 
-	t.Run("PostUser", func(t *testing.T) {
+	t.Run("POST", func(t *testing.T) {
 
 		t.Run("OK", func(t *testing.T) {
 			defer dao.CleanMocks()
@@ -118,7 +117,7 @@ func TestControllers(t *testing.T) {
 		})
 	})
 
-	t.Run("DeleteUser", func(t *testing.T) {
+	t.Run("DELETE", func(t *testing.T) {
 
 		t.Run("OK", func(t *testing.T) {
 			defer dao.CleanMocks()
@@ -162,5 +161,4 @@ func TestControllers(t *testing.T) {
 			}
 		})
 	})
-
 }
