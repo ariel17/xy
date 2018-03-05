@@ -22,6 +22,8 @@ func (m *MongoDB) Connect() error {
 	return err
 }
 
+// Users -----------------------------------------------------------------------
+
 // InsertUser TODO
 func (m *MongoDB) InsertUser(u *domain.User) error {
 	u.ID = bson.NewObjectId()
@@ -36,14 +38,16 @@ func (m *MongoDB) DeleteUser(id string) error {
 // GetUser TODO
 func (m *MongoDB) GetUser(id string) (*domain.User, error) {
 	var u domain.User
-	err := m.getCollection("users").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&u)
+	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	err := m.getCollection("users").Find(query).One(&u)
 	return &u, err
 }
 
 // GetPendingPin returns a registered pin for indicated ID, or error.
 func (m *MongoDB) GetPendingPin(id string) (*domain.Pin, error) {
 	var pin domain.Pin
-	err := m.getCollection("pending_pins").Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&pin)
+	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	err := m.getCollection("pending_pins").Find(query).One(&pin)
 	return &pin, err
 }
 
@@ -57,6 +61,29 @@ func (m *MongoDB) InsertPendingPin(p *domain.Pin) error {
 func (m *MongoDB) DeletePendingPin(id string) error {
 	return m.getCollection("pending_pins").RemoveId(id)
 }
+
+// Users + Devices -------------------------------------------------------------
+
+// GetUserDevices returns all devices registered for indicated user and/or
+// errors.
+func (m *MongoDB) GetUserDevices(id string) ([]domain.Device, error) {
+	devices := []domain.Device{}
+	query := bson.M{"user_id": bson.ObjectIdHex(id)}
+	err := m.getCollection("devices").Find(query).All(devices)
+	return devices, err
+}
+
+// Devices ---------------------------------------------------------------------
+
+// GetDevice returns a device matching the indicated ID or a possible error.
+func (m *MongoDB) GetDevice(id string) (*domain.Device, error) {
+	var d domain.Device
+	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	err := m.getCollection("devices").Find(query).One(&d)
+	return &d, err
+}
+
+// privates --------------------------------------------------------------------
 
 func (m *MongoDB) getCollection(collection string) *mgo.Collection {
 	return m.session.DB(config.DbName).C(collection)

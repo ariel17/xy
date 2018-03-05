@@ -13,6 +13,8 @@ type DB interface {
 	InsertUser(u *domain.User) error
 	DeleteUser(id string) error
 	GetUser(id string) (*domain.User, error)
+	GetUserDevices(id string) ([]domain.Device, error)
+	GetDevice(id string) (*domain.Device, error)
 }
 
 // Client holds the implementation instance, based on the environment.

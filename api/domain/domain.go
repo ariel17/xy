@@ -12,10 +12,11 @@ type User struct {
 	Nick string        `json:"nick" bson:"name"`
 }
 
-// Observable represents a thing (person or object) to be tracked.
-type Observable struct {
+// Device represents a thing being tracked.
+type Device struct {
 	ID     bson.ObjectId `json:"_id" bson:"_id"`
-	UserID int64         `json:"user_id" bson:"user_id"`
+	UserID bson.ObjectId `json:"user_id,omitempty" bson:"user_id,omitempty"`
+	Model  string        `json:"model" bson:"model"`
 }
 
 // Position represents a point on the Earth surface.
@@ -24,12 +25,18 @@ type Position struct {
 	Longitude float64 `json:"longitude"`
 }
 
-// ObservablePosition represents a position in Earth for an observable, on a
-// given time.
-type ObservablePosition struct {
-	Observable Observable `json:"observable"`
-	Position   Position   `json:"position"`
-	CreatedAt  time.Time  `json:"created_at"`
+// DeviceRegistration is the data required to associate a device with an user.
+type DeviceRegistration struct {
+	UserID bson.ObjectId `json:"user_id,omitempty" bson:"user_id,omitempty"`
+	Pin    string        `json:"pin"`
+	Device Device        `json:"device"`
+}
+
+// DevicePosition represents a position in Earth for a device, on a given time.
+type DevicePosition struct {
+	Device    Device    `json:"device"`
+	Position  Position  `json:"position"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // Pin TODO
