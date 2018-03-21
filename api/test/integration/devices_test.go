@@ -1,4 +1,4 @@
-package test
+package integration
 
 import (
 	"bytes"
@@ -14,9 +14,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func TestDeviceRegisterController(t *testing.T) {
+func TestDeviceRegistration(t *testing.T) {
 
-	t.Run("POST", func(t *testing.T) {
+	t.Run("Registering a new device", func(t *testing.T) {
 		t.Run("OK", func(t *testing.T) {
 
 			userID := bson.NewObjectId().Hex()
@@ -85,29 +85,77 @@ func TestDeviceRegisterController(t *testing.T) {
 			}
 		})
 
-		t.Run("UserNotFound", func(t *testing.T) {
+		t.Run("Failed when user is not found", func(t *testing.T) {
+			t.FailNow()
+		})
+	})
+
+	t.Run("Getting the user's devices", func(t *testing.T) {
+		t.Run("Existing user", func(t *testing.T) {
+			`{
+				"status":"success",
+				"message":"User's devices fetch successful.",
+				"data": [
+					{"_id":"1","model":"Model X","created_at":"2018-01-01T00:00:00Z"},
+					{"_id":"2","model":"Model Y","created_at":"2018-01-02T00:00:00Z"}
+				]
+			}`
+
+			t.FailNow()
+		})
+
+		t.Run("User not found", func(t *testing.T) {
+			`{
+				"status":"failed",
+				"message":"User not exists.",
+			}`
+
+			t.FailNow()
 		})
 	})
 }
 
-func TestDevicePositionController(t *testing.T) {
+func TestDevicePosition(t *testing.T) {
 
-	t.Run("Current", func(t *testing.T) {
-		t.Run("GET", func(t *testing.T) {
-			t.Run("OK", func(t *testing.T) {
-			})
-		})
+	t.Run("Getting current device position", func(t *testing.T) {
+		`{
+			"status":"success",
+			"message":"Current position fetch successful.",
+			"data":{
+				"datetime":"2018-01-01T00:00:00Z",
+				"latitude":0.0,
+				"longitude":0.0
+			}
+		}`
 
-		t.Run("POST", func(t *testing.T) {
-			t.Run("OK", func(t *testing.T) {
-			})
-		})
+		t.FailNow()
 	})
 
-	t.Run("History", func(t *testing.T) {
-		t.Run("GET", func(t *testing.T) {
-			t.Run("OK", func(t *testing.T) {
-			})
-		})
+	t.Run("Updating the current device position", func(t *testing.T) {
+		`{
+			"status":"success",
+			"message":"Device position updated.",
+			"data":{
+				"datetime":"2018-01-01T00:00:00Z",
+				"latitude":0.0,
+				"longitude":0.0
+			}
+		}`
+		t.FailNow()
+	})
+
+	t.Run("Getting the device's position history", func(t *testing.T) {
+		`{
+			"status":"success",
+			"message":"History for device fetched successful.",
+			"data": [
+				{"datetime":"2018-01-01T00:00:00Z","latitude":0.0,"longitude":0.0},
+				{"datetime":"2018-01-01T01:00:00Z","latitude":1.0,"longitude":-1.0},
+				{"datetime":"2018-01-01T02:00:00Z","latitude":2.0,"longitude":-3.0},
+				{"datetime":"2018-01-01T05:00:00Z","latitude":3.0,"longitude":-10.0},
+				{"datetime":"2018-01-01T07:00:00Z","latitude":4.0,"longitude":-20.0},
+			]
+		}`
+		t.FailNow()
 	})
 }

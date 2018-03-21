@@ -1,4 +1,4 @@
-package test
+package integration
 
 import (
 	"bytes"
@@ -12,10 +12,10 @@ import (
 	"github.com/ariel17/xy/api/domain"
 )
 
-func TestUserController(t *testing.T) {
+func TestUserManagement(t *testing.T) {
 
-	t.Run("GET", func(t *testing.T) {
-		t.Run("OK", func(t *testing.T) {
+	t.Run("Getting user information", func(t *testing.T) {
+		t.Run("Existing user", func(t *testing.T) {
 			defer dao.CleanMocks()
 			u := domain.User{
 				ID:   "abc123",
@@ -49,7 +49,7 @@ func TestUserController(t *testing.T) {
 			}
 		})
 
-		t.Run("NotFound", func(t *testing.T) {
+		t.Run("Not found", func(t *testing.T) {
 			router := api.ConfigureRouter()
 			req, _ := http.NewRequest("GET", "/users/9999", nil)
 			resp := httptest.NewRecorder()
@@ -74,8 +74,7 @@ func TestUserController(t *testing.T) {
 		})
 	})
 
-	t.Run("POST", func(t *testing.T) {
-
+	t.Run("Creating a new user", func(t *testing.T) {
 		t.Run("OK", func(t *testing.T) {
 			defer dao.CleanMocks()
 			u := domain.User{
@@ -115,11 +114,14 @@ func TestUserController(t *testing.T) {
 				t.FailNow()
 			}
 		})
+
+		t.Run("Missing required fields", func(t *testing.T) {
+			t.FailNow()
+		})
 	})
 
-	t.Run("DELETE", func(t *testing.T) {
-
-		t.Run("OK", func(t *testing.T) {
+	t.Run("Deleting an user", func(t *testing.T) {
+		t.Run("Existing user", func(t *testing.T) {
 			defer dao.CleanMocks()
 			u := domain.User{
 				ID:   "abc123",
@@ -159,6 +161,10 @@ func TestUserController(t *testing.T) {
 				t.Errorf("deleted user found! %v", uu)
 				t.FailNow()
 			}
+		})
+
+		t.Run("User not found", func(t *testing.T) {
+			t.FailNow()
 		})
 	})
 }
