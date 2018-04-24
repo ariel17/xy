@@ -31,22 +31,22 @@ func (m *MongoDB) InsertUser(u *domain.User) error {
 }
 
 // DeleteUser TODO
-func (m *MongoDB) DeleteUser(id string) error {
+func (m *MongoDB) DeleteUser(id bson.ObjectId) error {
 	return m.getCollection("users").RemoveId(id)
 }
 
 // GetUser TODO
-func (m *MongoDB) GetUser(id string) (*domain.User, error) {
+func (m *MongoDB) GetUser(id bson.ObjectId) (*domain.User, error) {
 	var u domain.User
-	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	query := bson.M{"_id": id}
 	err := m.getCollection("users").Find(query).One(&u)
 	return &u, err
 }
 
 // GetPendingPin returns a registered pin for indicated ID, or error.
-func (m *MongoDB) GetPendingPin(id string) (*domain.Pin, error) {
+func (m *MongoDB) GetPendingPin(id bson.ObjectId) (*domain.Pin, error) {
 	var pin domain.Pin
-	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	query := bson.M{"_id": id}
 	err := m.getCollection("pending_pins").Find(query).One(&pin)
 	return &pin, err
 }
@@ -58,7 +58,7 @@ func (m *MongoDB) InsertPendingPin(p *domain.Pin) error {
 }
 
 // DeletePendingPin removes a pending pin by its ID.
-func (m *MongoDB) DeletePendingPin(id string) error {
+func (m *MongoDB) DeletePendingPin(id bson.ObjectId) error {
 	return m.getCollection("pending_pins").RemoveId(id)
 }
 
@@ -66,9 +66,9 @@ func (m *MongoDB) DeletePendingPin(id string) error {
 
 // GetUserDevices returns all devices registered for indicated user and/or
 // errors.
-func (m *MongoDB) GetUserDevices(id string) ([]domain.Device, error) {
+func (m *MongoDB) GetUserDevices(id bson.ObjectId) ([]domain.Device, error) {
 	devices := []domain.Device{}
-	query := bson.M{"user_id": bson.ObjectIdHex(id)}
+	query := bson.M{"user_id": id}
 	err := m.getCollection("devices").Find(query).All(devices)
 	return devices, err
 }
@@ -76,9 +76,9 @@ func (m *MongoDB) GetUserDevices(id string) ([]domain.Device, error) {
 // Devices ---------------------------------------------------------------------
 
 // GetDevice returns a device matching the indicated ID or a possible error.
-func (m *MongoDB) GetDevice(id string) (*domain.Device, error) {
+func (m *MongoDB) GetDevice(id bson.ObjectId) (*domain.Device, error) {
 	var d domain.Device
-	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	query := bson.M{"_id": id}
 	err := m.getCollection("devices").Find(query).One(&d)
 	return &d, err
 }

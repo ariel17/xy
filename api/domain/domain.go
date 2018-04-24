@@ -12,11 +12,27 @@ type User struct {
 	Nick string        `json:"nick" bson:"name"`
 }
 
+// NewUser creates a new user with setted ID.
+func NewUser(nick string) *User {
+	return &User{
+		ID:   bson.NewObjectId(),
+		Nick: nick,
+	}
+}
+
 // Device represents a thing being tracked.
 type Device struct {
 	ID     bson.ObjectId `json:"_id" bson:"_id"`
 	UserID bson.ObjectId `json:"user_id,omitempty" bson:"user_id,omitempty"`
 	Model  string        `json:"model" bson:"model"`
+}
+
+// NewDevice creates a new device for given user ID with setted ID, empty model.
+func NewDevice(userID bson.ObjectId) *Device {
+	return &Device{
+		ID:     bson.NewObjectId(),
+		UserID: userID,
+	}
 }
 
 // Position represents a point on the Earth surface.

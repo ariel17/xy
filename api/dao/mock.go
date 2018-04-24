@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	errors          map[string]error
-	insertedUsers   map[string]domain.User
-	insertedDevices map[string]domain.Device
+	errors          map[bson.ObjectId]error
+	insertedUsers   map[bson.ObjectId]domain.User
+	insertedDevices map[bson.ObjectId]domain.Device
 )
 
 // MockDB is the testing implementation for validation & verification.
@@ -24,16 +24,15 @@ func (m *MockDB) Connect() error {
 
 // InsertUser TODO
 func (m *MockDB) InsertUser(u *domain.User) error {
-	k := string(u.ID)
-	if err := errors[k]; err != nil {
+	if err := errors[u.ID]; err != nil {
 		return err
 	}
-	insertedUsers[k] = *u
+	insertedUsers[u.ID] = *u
 	return nil
 }
 
 // DeleteUser TODO
-func (m *MockDB) DeleteUser(id string) error {
+func (m *MockDB) DeleteUser(id bson.ObjectId) error {
 	if err := errors[id]; err != nil {
 		return err
 	}
@@ -42,7 +41,7 @@ func (m *MockDB) DeleteUser(id string) error {
 }
 
 // GetUser TODO
-func (m *MockDB) GetUser(id string) (*domain.User, error) {
+func (m *MockDB) GetUser(id bson.ObjectId) (*domain.User, error) {
 	if err := errors[id]; err != nil {
 		return nil, err
 	}
@@ -53,13 +52,13 @@ func (m *MockDB) GetUser(id string) (*domain.User, error) {
 // Devices + Users -------------------------------------------------------------
 
 // GetUserDevices TODO
-func (m *MockDB) GetUserDevices(id string) ([]domain.Device, error) {
+func (m *MockDB) GetUserDevices(id bson.ObjectId) ([]domain.Device, error) {
 	if err := errors[id]; err != nil {
 		return nil, err
 	}
 	devices := []domain.Device{}
 	for _, v := range insertedDevices {
-		if v.UserID == bson.ObjectIdHex(id) {
+		if v.UserID == id {
 			devices = append(devices, v)
 		}
 	}
@@ -69,7 +68,7 @@ func (m *MockDB) GetUserDevices(id string) ([]domain.Device, error) {
 // Devices ---------------------------------------------------------------------
 
 // GetDevice TODO
-func (m *MockDB) GetDevice(id string) (*domain.Device, error) {
+func (m *MockDB) GetDevice(id bson.ObjectId) (*domain.Device, error) {
 	if err := errors[id]; err != nil {
 		return nil, err
 	}
@@ -80,15 +79,15 @@ func (m *MockDB) GetDevice(id string) (*domain.Device, error) {
 // Mock support ----------------------------------------------------------------
 
 // AddMockError puts an error to be raised on a mock operation.
-func AddMockError(id string, err error) {
+func AddMockError(id bson.ObjectId, err error) {
 	errors[id] = err
 }
 
 // CleanMocks removes all mock wires.
 func CleanMocks() {
-	errors = make(map[string]error)
-	insertedUsers = make(map[string]domain.User)
-	insertedDevices = make(map[string]domain.Device)
+	errors = make(map[bson.ObjectId]error)
+	insertedUsers = make(map[bson.ObjectId]domain.User)
+	insertedDevices = make(map[bson.ObjectId]domain.Device)
 }
 
 func init() {
