@@ -70,13 +70,14 @@ func TestUserManagement(t *testing.T) {
 		t.Run("OK", func(t *testing.T) {
 			defer dao.CleanMocks()
 			u := domain.NewUser("ariel17")
-			if bytes, err := json.Marshal(u); err != nil {
+			b, err := json.Marshal(u)
+			if err != nil {
 				t.Error(err)
 				t.FailNow()
 			}
 
 			router := api.ConfigureRouter()
-			req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(bytes))
+			req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(b))
 			resp := httptest.NewRecorder()
 			router.ServeHTTP(resp, req)
 
@@ -89,7 +90,7 @@ func TestUserManagement(t *testing.T) {
 			} else if uu == nil {
 				t.Errorf("created user not found: expected: %v", u)
 				t.FailNow()
-			} else if *uu != u {
+			} else if uu != u {
 				t.Errorf("created user mismatch: expected %v, got %v", u, uu)
 				t.FailNow()
 			}
