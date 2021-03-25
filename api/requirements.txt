@@ -12,7 +12,7 @@ functools32==3.2.3.post2
 idna==2.6
 ipaddress==1.0.19
 jsonschema==2.6.0
-PyYAML==3.12
+PyYAML==5.4
 requests==2.18.4
 six==1.11.0
 texttable==0.9.1
